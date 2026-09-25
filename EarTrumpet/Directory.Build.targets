@@ -1,13 +1,19 @@
 <Project>
   <!--
-    Builds the localized satellite assemblies with csc instead of al.exe, so the
-    project builds with Visual Studio Build Tools alone (al.exe only ships with
-    the .NET Framework SDK). Pass -p:UseAlForSatellites=true to use al.exe.
+    Builds the localized satellite assemblies with csc when al.exe is missing, so the
+    project also builds with Visual Studio Build Tools alone (al.exe only ships with the
+    .NET Framework SDK). With the SDK installed, the standard al.exe step runs unchanged.
   -->
-  <Target Name="GenerateSatelliteAssemblies"
+  <PropertyGroup Condition="'$(TargetFrameworkSDKToolsDirectory)' == '' or !Exists('$(TargetFrameworkSDKToolsDirectory)al.exe')">
+    <!-- Skips the al.exe-based GenerateSatelliteAssemblies target. -->
+    <GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
+    <CreateSatelliteAssembliesDependsOn>$(CreateSatelliteAssembliesDependsOn);GenerateSatelliteAssembliesWithCsc</CreateSatelliteAssembliesDependsOn>
+  </PropertyGroup>
+
+  <Target Name="GenerateSatelliteAssembliesWithCsc"
           Inputs="$(MSBuildAllProjects);@(_SatelliteAssemblyResourceInputs);$(IntermediateOutputPath)$(TargetName)$(TargetExt)"
           Outputs="$(IntermediateOutputPath)%(Culture)\$(TargetName).resources.dll"
-          Condition="'@(_SatelliteAssemblyResourceInputs)' != '' and '$(UseAlForSatellites)' != 'true'">
+          Condition="'@(_SatelliteAssemblyResourceInputs)' != ''">
 
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateOutputPath)$(TargetName)$(TargetExt)">
       <Output TaskParameter="Assemblies" ItemName="_SatelliteMainAssemblyIdentity" />
