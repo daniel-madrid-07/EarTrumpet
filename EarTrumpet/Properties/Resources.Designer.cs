@@ -1699,5 +1699,58 @@ namespace EarTrumpet.Properties {
                 return ResourceManager.GetString("WindowsLegacyMenuText", resourceCulture);
             }
         }
+        /// <summary>
+        ///   Looks up a localized string similar to Hide.
+        /// </summary>
+        public static string HideAppButtonText {
+            get {
+                return ResourceManager.GetString("HideAppButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hidden apps.
+        /// </summary>
+        public static string HiddenAppsSettingsPageText {
+            get {
+                return ResourceManager.GetString("HiddenAppsSettingsPageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hidden apps don't appear in the flyout or the mixer, even after they restart. Their sound keeps playing..
+        /// </summary>
+        public static string HiddenAppsDescriptionText {
+            get {
+                return ResourceManager.GetString("HiddenAppsDescriptionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No hidden apps. To hide one, right-click it in the flyout or the mixer and choose Hide..
+        /// </summary>
+        public static string HiddenAppsEmptyText {
+            get {
+                return ResourceManager.GetString("HiddenAppsEmptyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show.
+        /// </summary>
+        public static string HiddenAppsRestoreText {
+            get {
+                return ResourceManager.GetString("HiddenAppsRestoreText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System sounds.
+        /// </summary>
+        public static string SystemSoundsDisplayName {
+            get {
+                return ResourceManager.GetString("SystemSoundsDisplayName", resourceCulture);
+            }
+        }
     }
 }

@@ -42,13 +42,17 @@ namespace EarTrumpet.DataModel.WindowsAudio.Internal
         }
         public IEnumerable<IAudioDeviceSession> Sessions => _sessions;
 
-        public string DisplayName => _sessions.Count > 0 ? _sessions[0].DisplayName : null;
+        // All processes of an app (e.g. every Store Python process) share one group, so prefer the
+        // name and icon of a session that set its own over the package's.
+        public string DisplayName => (_sessions.FirstOrDefault(IsDisplayNameFromSessionOf) ?? _sessions.FirstOrDefault())?.DisplayName;
+        public bool IsDisplayNameFromSession => _sessions.Any(IsDisplayNameFromSessionOf);
 
         public string ExeName => _sessions.Count > 0 ? _sessions[0].ExeName : null;
 
         public Guid GroupingParam { get; private set; }
 
-        public string IconPath => _sessions.Count > 0 ? _sessions[0].IconPath : null;
+        public string IconPath => (_sessions.FirstOrDefault(IsIconPathFromSessionOf) ?? _sessions.FirstOrDefault())?.IconPath;
+        public bool IsIconPathFromSession => _sessions.Any(IsIconPathFromSessionOf);
 
         public string Id => _id;
 
@@ -185,13 +189,26 @@ namespace EarTrumpet.DataModel.WindowsAudio.Internal
 
             // Inherit properties (safely) from existing streams
             session.IsMuted = _sessions[0].IsMuted || session.IsMuted;
+
+            RaisePropertyChanged(nameof(DisplayName));
+            RaisePropertyChanged(nameof(IconPath));
         }
 
         public void RemoveSession(IAudioDeviceSession session)
         {
             session.PropertyChanged -= Session_PropertyChanged;
             _sessions.Remove(session);
+
+            RaisePropertyChanged(nameof(DisplayName));
+            RaisePropertyChanged(nameof(IconPath));
         }
+
+        // Groups nest (app > grouping param > session), so look through inner groups.
+        private static bool IsDisplayNameFromSessionOf(IAudioDeviceSession session) =>
+            (session as AudioDeviceSession)?.IsDisplayNameFromSession ?? (session as AudioDeviceSessionGroup)?.IsDisplayNameFromSession ?? false;
+
+        private static bool IsIconPathFromSessionOf(IAudioDeviceSession session) =>
+            (session as AudioDeviceSession)?.IsIconPathFromSession ?? (session as AudioDeviceSessionGroup)?.IsIconPathFromSession ?? false;
 
         private void Session_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

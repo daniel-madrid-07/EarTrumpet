@@ -28,6 +28,22 @@ namespace EarTrumpet.UI.ViewModels
                 Command = new RelayCommand(() => RequestClose.Invoke())
             });
 
+            var hiddenAppKey = HiddenAppKey.For(app);
+            if (hiddenAppKey != null && !app.IsExpanded)
+            {
+                Toolbar.Insert(0, new ToolbarItemViewModel
+                {
+                    GlyphFontSize = 16,
+                    DisplayName = Properties.Resources.HideAppButtonText,
+                    Glyph = "\uED1A",
+                    Command = new RelayCommand(() =>
+                    {
+                        RequestClose.Invoke();
+                        EarTrumpet.App.Settings.HideApp(hiddenAppKey);
+                    })
+                });
+            }
+
             if (app.IsMovable)
             {
                 var persistedDeviceId = app.PersistedOutputDevice;

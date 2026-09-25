@@ -15,6 +15,7 @@ namespace EarTrumpet
         public event Action SettingsHotkeyTyped;
         public event Action AbsoluteVolumeUpHotkeyTyped;
         public event Action AbsoluteVolumeDownHotkeyTyped;
+        public event EventHandler HiddenAppsChanged;
 
         private ISettingsBag _settings = StorageFactory.GetSettings();
 
@@ -164,6 +165,38 @@ namespace EarTrumpet
         {
             get => _settings.Get("UseLogarithmicVolume", false);
             set => _settings.Set("UseLogarithmicVolume", value);
+        }
+
+        // Apps hidden from the flyout and the mixer, keyed by executable file name (e.g. "steam.exe").
+        public string[] HiddenApps
+        {
+            get => _settings.Get("HiddenApps", new string[] { });
+            private set
+            {
+                _settings.Set("HiddenApps", value);
+                HiddenAppsChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public bool IsAppHidden(string key) =>
+            !string.IsNullOrEmpty(key) && HiddenApps.Contains(key, StringComparer.OrdinalIgnoreCase);
+
+        public void HideApp(string key)
+        {
+            if (!string.IsNullOrEmpty(key) && !IsAppHidden(key))
+            {
+                Trace.WriteLine($"AppSettings HideApp {key}");
+                HiddenApps = HiddenApps.Concat(new[] { key }).OrderBy(k => k, StringComparer.OrdinalIgnoreCase).ToArray();
+            }
+        }
+
+        public void UnhideApp(string key)
+        {
+            if (IsAppHidden(key))
+            {
+                Trace.WriteLine($"AppSettings UnhideApp {key}");
+                HiddenApps = HiddenApps.Where(k => !k.Equals(key, StringComparison.OrdinalIgnoreCase)).ToArray();
+            }
         }
 
         public WINDOWPLACEMENT? FullMixerWindowPlacement

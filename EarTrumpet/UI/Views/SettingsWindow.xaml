@@ -178,6 +178,41 @@
                           IsChecked="{Binding UseLogarithmicVolume, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EarTrumpetHiddenAppsSettingsPageViewModel}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Style="{StaticResource BodySubText}" Text="{x:Static resx:Resources.HiddenAppsDescriptionText}" />
+                <TextBlock Style="{StaticResource BodyText}"
+                           Text="{x:Static resx:Resources.HiddenAppsEmptyText}"
+                           Visibility="{Binding EmptyVisibility}" />
+                <ItemsControl Margin="0,12,0,0"
+                              Focusable="False"
+                              ItemsSource="{Binding HiddenApps}"
+                              Visibility="{Binding ListVisibility}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid MaxWidth="480" HorizontalAlignment="Left">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="320" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource BodyText}"
+                                           Text="{Binding DisplayName}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap" />
+                                <TextBlock Grid.Column="1"
+                                           Margin="12,6"
+                                           VerticalAlignment="Center"
+                                           Style="{StaticResource HyperlinkBlock}">
+                                    <Hyperlink Command="{Binding Restore}">
+                                        <Run Text="{x:Static resx:Resources.HiddenAppsRestoreText}" />
+                                    </Hyperlink>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:EarTrumpetLegacySettingsPageViewModel}">
             <StackPanel Orientation="Vertical">
                 <CheckBox HorizontalAlignment="Left"

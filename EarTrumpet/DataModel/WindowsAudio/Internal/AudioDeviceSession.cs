@@ -84,6 +84,8 @@ namespace EarTrumpet.DataModel.WindowsAudio.Internal
         public string DisplayName { get; private set; }
         public string ExeName => _appInfo.ExeName;
         public string IconPath { get; private set; }
+        public bool IsDisplayNameFromSession { get; private set; }
+        public bool IsIconPathFromSession { get; private set; }
         public Guid GroupingParam { get; private set; }
         public float PeakValue1 { get; private set; }
         public float PeakValue2 { get; private set; }
@@ -240,7 +242,8 @@ namespace EarTrumpet.DataModel.WindowsAudio.Internal
 
         private void ChooseDisplayName(string displayNameFromSession)
         {
-            if (!string.IsNullOrWhiteSpace(displayNameFromSession))
+            IsDisplayNameFromSession = !string.IsNullOrWhiteSpace(displayNameFromSession);
+            if (IsDisplayNameFromSession)
             {
                 DisplayName = displayNameFromSession;
             }
@@ -256,7 +259,8 @@ namespace EarTrumpet.DataModel.WindowsAudio.Internal
 
         private void ChooseIconPath(string iconPathFromSession)
         {
-            if (!string.IsNullOrWhiteSpace(iconPathFromSession) && !IsSystemSoundsSession)
+            IsIconPathFromSession = !string.IsNullOrWhiteSpace(iconPathFromSession) && !IsSystemSoundsSession;
+            if (IsIconPathFromSession)
             {
                 IconPath = iconPathFromSession;
             }
@@ -446,8 +450,14 @@ namespace EarTrumpet.DataModel.WindowsAudio.Internal
 
         void IAudioSessionEvents.OnIconPathChanged(string NewIconPath, ref Guid EventContext)
         {
-            IconPath = NewIconPath;
-            RaisePropertyChanged(nameof(IconPath));
+            // Apps commonly set their icon right after creating the session, so this is how
+            // most session-provided icons (including those of packaged apps) arrive.
+            ChooseIconPath(NewIconPath);
+
+            _dispatcher.BeginInvoke((Action)(() =>
+            {
+                RaisePropertyChanged(nameof(IconPath));
+            }));
         }
     }
 }

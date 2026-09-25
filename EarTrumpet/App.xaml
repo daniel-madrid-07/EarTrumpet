@@ -1982,7 +1982,8 @@
                                 <DataTemplate DataType="{x:Type vm:ToolbarItemViewModel}">
                                     <Button b:ButtonEx.IsToolBarButton="True"
                                             AutomationProperties.Name="{Binding DisplayName}"
-                                            Command="{Binding Command}">
+                                            Command="{Binding Command}"
+                                            ToolTip="{Binding DisplayName}">
                                         <Button.Template>
                                             <ControlTemplate TargetType="{x:Type Button}">
                                                 <Border Background="{TemplateBinding Background}">

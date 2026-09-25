@@ -1,11 +1,13 @@
 ﻿using EarTrumpet.DataModel.Audio;
 using EarTrumpet.DataModel.WindowsAudio;
 using EarTrumpet.Extensions;
+using EarTrumpet.UI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 
 namespace EarTrumpet.UI.ViewModels
 {
@@ -83,7 +85,16 @@ namespace EarTrumpet.UI.ViewModels
 
             foreach (var session in _device.Groups)
             {
-                Apps.AddSorted(new AppItemViewModel(this, session), AppItemViewModel.CompareByExeName);
+                if (!IsHidden(session))
+                {
+                    Apps.AddSorted(new AppItemViewModel(this, session), AppItemViewModel.CompareByExeName);
+                }
+            }
+
+            if (App.Settings != null)
+            {
+                // Weak, so the long-lived settings object doesn't keep removed devices alive.
+                WeakEventManager<AppSettings, EventArgs>.AddHandler(App.Settings, nameof(AppSettings.HiddenAppsChanged), OnHiddenAppsChanged);
             }
 
             UpdateMasterVolumeIcon();
@@ -183,8 +194,35 @@ namespace EarTrumpet.UI.ViewModels
             }
         }
 
+        private static bool IsHidden(IAudioDeviceSession session) =>
+            App.Settings != null && App.Settings.IsAppHidden(HiddenAppKey.For(session));
+
+        private void OnHiddenAppsChanged(object sender, EventArgs e)
+        {
+            foreach (var app in Apps.ToArray())
+            {
+                if (App.Settings.IsAppHidden(HiddenAppKey.For(app)))
+                {
+                    Apps.Remove(app);
+                }
+            }
+
+            foreach (var session in _device.Groups)
+            {
+                if (!Apps.Any(a => a.Id == session.Id) && !IsHidden(session))
+                {
+                    Apps.AddSorted(new AppItemViewModel(this, session), AppItemViewModel.CompareByExeName);
+                }
+            }
+        }
+
         private void AddSession(IAudioDeviceSession session)
         {
+            if (IsHidden(session))
+            {
+                return;
+            }
+
             var newSession = new AppItemViewModel(this, session);
 
             foreach (var app in Apps)

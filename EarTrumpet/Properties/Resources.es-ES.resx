@@ -659,4 +659,22 @@ Deseas abrir [https://eartrumpet.app/jmp/fixfonts] ahora?</value>
   <data name="SettingsUseGlobalMouseWheelHook" xml:space="preserve">
     <value>Usar la rueda de desplazamiento para cambiar el volumen mientras el control flotante está abierto</value>
   </data>
+  <data name="HideAppButtonText" xml:space="preserve">
+    <value>Ocultar</value>
+  </data>
+  <data name="HiddenAppsSettingsPageText" xml:space="preserve">
+    <value>Aplicaciones ocultas</value>
+  </data>
+  <data name="HiddenAppsDescriptionText" xml:space="preserve">
+    <value>Las aplicaciones ocultas no aparecen en el control flotante ni en el mezclador, aunque se reinicien. Su sonido se sigue oyendo.</value>
+  </data>
+  <data name="HiddenAppsEmptyText" xml:space="preserve">
+    <value>No hay aplicaciones ocultas. Para ocultar una, haz clic derecho sobre ella en el control flotante o en el mezclador y elige Ocultar.</value>
+  </data>
+  <data name="HiddenAppsRestoreText" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
+  <data name="SystemSoundsDisplayName" xml:space="preserve">
+    <value>Sonidos del sistema</value>
+  </data>
 </root>

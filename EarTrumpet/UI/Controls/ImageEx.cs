@@ -2,6 +2,7 @@
 using EarTrumpet.Interop.Helpers;
 using EarTrumpet.UI.Helpers;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -59,7 +60,9 @@ namespace EarTrumpet.UI.Controls
                     path = Environment.ExpandEnvironmentVariables(path.TrimStart('@'));
 
                     var scale = GetWindowDpi() / (double)96;
-                    if (!isDesktopApp)
+                    // Packaged apps normally carry an AppUserModelId, but a session can set its own
+                    // icon file (e.g. "C:\app\logo.ico,0"), which must be loaded like a desktop icon.
+                    if (!isDesktopApp && !IsFilePath(path))
                     {
                         return LoadShellIcon(path, isDesktopApp, (int)(Width * scale), (int)(Height * scale));
                     }
@@ -78,6 +81,12 @@ namespace EarTrumpet.UI.Controls
                         }
                         else
                         {
+                            // An explicit ",0" index: load the file itself.
+                            if (!File.Exists(path) && File.Exists(iconPath.ToString()))
+                            {
+                                path = iconPath.ToString();
+                            }
+
                             // libmpv-based applications, like Plex, may set an invalid indirect icon path
                             // https://github.com/mpv-player/mpv/issues/7269
                             // (e.g. C:\Program Files\Plex\Plex.exe,-IDI_ICON1)
@@ -155,7 +164,39 @@ namespace EarTrumpet.UI.Controls
             return path;
         }
 
+        private static bool IsFilePath(string path)
+        {
+            try
+            {
+                var iconPath = new StringBuilder(path);
+                Shlwapi.PathParseIconLocationW(iconPath);
+                return Path.IsPathRooted(iconPath.ToString());
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+        }
+
+        private void OnSourceExPropertyChanged(object sender, PropertyChangedEventArgs e) =>
+            Dispatcher.BeginInvoke((Action)OnSourceExChanged);
+
         private uint GetWindowDpi() => User32.GetDpiForWindow(((HwndSource)PresentationSource.FromVisual(this)).Handle);
-        private static void OnSourceExChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((ImageEx)d).OnSourceExChanged();
+        private static void OnSourceExChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var image = (ImageEx)d;
+
+            // Sessions often set their icon after they appear, so follow IconPath changes (weakly).
+            if (e.OldValue is INotifyPropertyChanged oldSource)
+            {
+                PropertyChangedEventManager.RemoveHandler(oldSource, image.OnSourceExPropertyChanged, nameof(IAppIconSource.IconPath));
+            }
+            if (e.NewValue is INotifyPropertyChanged newSource)
+            {
+                PropertyChangedEventManager.AddHandler(newSource, image.OnSourceExPropertyChanged, nameof(IAppIconSource.IconPath));
+            }
+
+            image.OnSourceExChanged();
+        }
     }
 }

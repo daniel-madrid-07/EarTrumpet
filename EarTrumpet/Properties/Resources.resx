@@ -665,4 +665,22 @@ Open [https://eartrumpet.app/jmp/fixfonts] now?</value>
   <data name="SettingsUseLogarithmicVolume" xml:space="preserve">
     <value>Use logarithmic volume scale</value>
   </data>
+  <data name="HideAppButtonText" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="HiddenAppsSettingsPageText" xml:space="preserve">
+    <value>Hidden apps</value>
+  </data>
+  <data name="HiddenAppsDescriptionText" xml:space="preserve">
+    <value>Hidden apps don't appear in the flyout or the mixer, even after they restart. Their sound keeps playing.</value>
+  </data>
+  <data name="HiddenAppsEmptyText" xml:space="preserve">
+    <value>No hidden apps. To hide one, right-click it in the flyout or the mixer and choose Hide.</value>
+  </data>
+  <data name="HiddenAppsRestoreText" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="SystemSoundsDisplayName" xml:space="preserve">
+    <value>System sounds</value>
+  </data>
 </root>
