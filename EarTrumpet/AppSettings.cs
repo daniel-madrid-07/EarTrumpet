@@ -199,6 +199,16 @@ namespace EarTrumpet
             }
         }
 
+        // Icons that replace an app's own, keyed like HiddenApps. No UI; edited in the settings store.
+        public AppIconOverride[] IconOverrides
+        {
+            get => _settings.Get("IconOverrides", new AppIconOverride[] { });
+            set => _settings.Set("IconOverrides", value);
+        }
+
+        public string GetIconOverride(string key) =>
+            string.IsNullOrEmpty(key) ? null : IconOverrides.FirstOrDefault(o => key.Equals(o.App, StringComparison.OrdinalIgnoreCase))?.IconPath;
+
         public WINDOWPLACEMENT? FullMixerWindowPlacement
         {
             get => _settings.Get("FullMixerWindowPlacement", default(WINDOWPLACEMENT?));
@@ -297,5 +307,11 @@ namespace EarTrumpet
             var region = new Windows.Globalization.GeographicRegion();
             return !europeanUnionRegions.Contains(region.CodeTwoLetter);
         }
+    }
+
+    public class AppIconOverride
+    {
+        public string App { get; set; }       // An app key (see UI.Helpers.AppKey), e.g. "#systemsounds"
+        public string IconPath { get; set; }  // e.g. "%SystemRoot%\System32\imageres.dll,-5308" or "C:\icons\app.ico"
     }
 }

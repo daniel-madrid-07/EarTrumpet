@@ -195,13 +195,13 @@ namespace EarTrumpet.UI.ViewModels
         }
 
         private static bool IsHidden(IAudioDeviceSession session) =>
-            App.Settings != null && App.Settings.IsAppHidden(HiddenAppKey.For(session));
+            App.Settings != null && App.Settings.IsAppHidden(AppKey.For(session));
 
         private void OnHiddenAppsChanged(object sender, EventArgs e)
         {
             foreach (var app in Apps.ToArray())
             {
-                if (App.Settings.IsAppHidden(HiddenAppKey.For(app)))
+                if (App.Settings.IsAppHidden(AppKey.For(app)))
                 {
                     Apps.Remove(app);
                 }

@@ -40,7 +40,7 @@ namespace EarTrumpet.UI.ViewModels
             {
                 HiddenApps.Add(new HiddenAppViewModel
                 {
-                    DisplayName = HiddenAppKey.GetDisplayName(key),
+                    DisplayName = AppKey.GetDisplayName(key),
                     Restore = new RelayCommand(() => _settings.UnhideApp(key)),
                 });
             }

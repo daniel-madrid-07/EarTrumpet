@@ -2,6 +2,7 @@
 using EarTrumpet.DataModel.WindowsAudio.Internal;
 using EarTrumpet.DataModel.WindowsAudio;
 using EarTrumpet.Extensions;
+using EarTrumpet.UI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,7 +31,7 @@ namespace EarTrumpet.UI.ViewModels
         public string DisplayName => _session.DisplayName;
         public string ExeName => _session.ExeName;
         public string AppId => _session.AppId;
-        public string IconPath => _session.IconPath;
+        public string IconPath => EarTrumpet.App.Settings?.GetIconOverride(AppKey.For(this)) ?? _session.IconPath;
         public bool IsDesktopApp => _session.IsDesktopApp;
         public bool IsExpanded { get; private set; }
         public int ProcessId => _session.ProcessId;

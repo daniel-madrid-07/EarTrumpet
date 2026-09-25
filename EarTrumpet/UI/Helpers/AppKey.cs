@@ -7,10 +7,10 @@ using System.Text;
 
 namespace EarTrumpet.UI.Helpers
 {
-    // Identifies an app for AppSettings.HiddenApps by its executable file name (e.g. "steam.exe"),
-    // so an app stays hidden across restarts and process ids. Packaged apps use their process
-    // executable too, rather than their versioned package install path.
-    public static class HiddenAppKey
+    // Identifies an app in AppSettings (HiddenApps, IconOverrides) by its executable file name
+    // (e.g. "steam.exe"), so a setting sticks across restarts and process ids. Packaged apps use
+    // their process executable too, rather than their versioned package install path.
+    public static class AppKey
     {
         public const string SystemSounds = "#systemsounds";
 

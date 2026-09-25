@@ -28,8 +28,8 @@ namespace EarTrumpet.UI.ViewModels
                 Command = new RelayCommand(() => RequestClose.Invoke())
             });
 
-            var hiddenAppKey = HiddenAppKey.For(app);
-            if (hiddenAppKey != null && !app.IsExpanded)
+            var appKey = AppKey.For(app);
+            if (appKey != null && !app.IsExpanded)
             {
                 Toolbar.Insert(0, new ToolbarItemViewModel
                 {
@@ -39,7 +39,7 @@ namespace EarTrumpet.UI.ViewModels
                     Command = new RelayCommand(() =>
                     {
                         RequestClose.Invoke();
-                        EarTrumpet.App.Settings.HideApp(hiddenAppKey);
+                        EarTrumpet.App.Settings.HideApp(appKey);
                     })
                 });
             }
