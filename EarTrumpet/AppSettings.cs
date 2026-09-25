@@ -1,5 +1,6 @@
 ﻿using EarTrumpet.DataModel.Storage;
 using EarTrumpet.Interop.Helpers;
+using EarTrumpet.UI.Helpers;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -200,10 +201,14 @@ namespace EarTrumpet
             }
         }
 
-        // Icons that replace an app's own, keyed like HiddenApps.
+        // Icons that replace an app's own, keyed like HiddenApps. Until the list is first saved,
+        // System Sounds uses the four-pane Windows glyph; resetting it saves the list without it.
         public AppIconOverride[] IconOverrides
         {
-            get => _settings.Get("IconOverrides", new AppIconOverride[] { });
+            get => _settings.Get("IconOverrides", new[]
+            {
+                new AppIconOverride { App = AppKey.SystemSounds, IconPath = @"%SystemRoot%\System32\imageres.dll,-5308" },
+            });
             private set
             {
                 _settings.Set("IconOverrides", value);
