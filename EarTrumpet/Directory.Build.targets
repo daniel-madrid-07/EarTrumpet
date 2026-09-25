@@ -1,0 +1,44 @@
+<Project>
+  <!--
+    Builds the localized satellite assemblies with csc instead of al.exe, so the
+    project builds with Visual Studio Build Tools alone (al.exe only ships with
+    the .NET Framework SDK). Pass -p:UseAlForSatellites=true to use al.exe.
+  -->
+  <Target Name="GenerateSatelliteAssemblies"
+          Inputs="$(MSBuildAllProjects);@(_SatelliteAssemblyResourceInputs);$(IntermediateOutputPath)$(TargetName)$(TargetExt)"
+          Outputs="$(IntermediateOutputPath)%(Culture)\$(TargetName).resources.dll"
+          Condition="'@(_SatelliteAssemblyResourceInputs)' != '' and '$(UseAlForSatellites)' != 'true'">
+
+    <GetAssemblyIdentity AssemblyFiles="$(IntermediateOutputPath)$(TargetName)$(TargetExt)">
+      <Output TaskParameter="Assemblies" ItemName="_SatelliteMainAssemblyIdentity" />
+    </GetAssemblyIdentity>
+
+    <PropertyGroup>
+      <_SatelliteCulture>%(_SatelliteAssemblyResourceInputs.Culture)</_SatelliteCulture>
+      <_SatelliteDir>$(IntermediateOutputPath)$(_SatelliteCulture)\</_SatelliteDir>
+      <_SatelliteVersion>@(_SatelliteMainAssemblyIdentity->'%(Version)')</_SatelliteVersion>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_SatelliteDir)" />
+    <WriteLinesToFile File="$(_SatelliteDir)SatelliteAssemblyInfo.cs"
+                      Lines="[assembly: System.Reflection.AssemblyCulture(&quot;$(_SatelliteCulture)&quot;)];[assembly: System.Reflection.AssemblyVersion(&quot;$(_SatelliteVersion)&quot;)]"
+                      Overwrite="true" />
+
+    <Csc TargetType="library"
+         Sources="$(_SatelliteDir)SatelliteAssemblyInfo.cs"
+         Resources="@(_SatelliteAssemblyResourceInputs)"
+         OutputAssembly="$(_SatelliteDir)$(TargetName).resources.dll"
+         Platform="$(PlatformTarget)"
+         NoConfig="true"
+         NoStandardLib="true"
+         References="$([System.IO.Path]::Combine('$(FrameworkPathOverride)', 'mscorlib.dll'))"
+         Deterministic="true"
+         ToolExe="$(CscToolExe)"
+         ToolPath="$(CscToolPath)"
+         UseSharedCompilation="$(UseSharedCompilation)" />
+
+    <ItemGroup>
+      <FileWrites Include="$(_SatelliteDir)$(TargetName).resources.dll;$(_SatelliteDir)SatelliteAssemblyInfo.cs" />
+    </ItemGroup>
+  </Target>
+</Project>
