@@ -6,6 +6,8 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -46,6 +48,12 @@ namespace EarTrumpet.UI.Helpers
         }
 
         private const int WM_CALLBACKMOUSEMSG = User32.WM_USER + 1024;
+
+        // The icon is identified by a GUID derived from this executable's path (the shell ties an icon
+        // GUID to one path), so a new instance replaces an icon left behind by one that was killed
+        // instead of adding another next to it. If the shell refuses the GUID we fall back to hWnd/uID.
+        private static readonly Guid s_iconGuid = CreateIconGuid();
+        private bool _useGuid = true;
 
         private readonly Win32Window _window;
         private readonly DispatcherTimer _invalidationTimer;
@@ -106,11 +114,25 @@ namespace EarTrumpet.UI.Helpers
             {
                 cbSize = Marshal.SizeOf(typeof(NOTIFYICONDATAW)),
                 hWnd = _window.Handle,
-                uFlags = NotifyIconFlags.NIF_MESSAGE | NotifyIconFlags.NIF_ICON | NotifyIconFlags.NIF_TIP | NotifyIconFlags.NIF_SHOWTIP,
+                uFlags = NotifyIconFlags.NIF_MESSAGE | NotifyIconFlags.NIF_ICON | NotifyIconFlags.NIF_TIP | NotifyIconFlags.NIF_SHOWTIP |
+                    (_useGuid ? NotifyIconFlags.NIF_GUID : 0),
                 uCallbackMessage = WM_CALLBACKMOUSEMSG,
                 hIcon = IconSource.Current.Handle,
-                szTip = _text
+                szTip = _text,
+                guidItem = _useGuid ? s_iconGuid : Guid.Empty,
             };
+        }
+
+        private static Guid CreateIconGuid()
+        {
+            using (var sha = new SHA256CryptoServiceProvider())
+            {
+                var path = Process.GetCurrentProcess().MainModule.FileName.ToLowerInvariant();
+                var hash = sha.ComputeHash(Encoding.UTF8.GetBytes("EarTrumpet.NotifyIcon|" + path));
+                var bytes = new byte[16];
+                Array.Copy(hash, bytes, 16);
+                return new Guid(bytes);
+            }
         }
 
         private void Update()
@@ -130,9 +152,24 @@ namespace EarTrumpet.UI.Helpers
                 }
                 else
                 {
+                    if (_useGuid)
+                    {
+                        // Clears an icon a killed instance left under our GUID; fails harmlessly otherwise.
+                        Shell32.Shell_NotifyIconW(Shell32.NotifyIconMessage.NIM_DELETE, ref data);
+                    }
+
                     if (!Shell32.Shell_NotifyIconW(Shell32.NotifyIconMessage.NIM_ADD, ref data))
                     {
                         Trace.WriteLine($"ShellNotifyIcon Update NIM_ADD Failed {(uint)Marshal.GetLastWin32Error()}");
+                        if (_useGuid)
+                        {
+                            _useGuid = false;
+                            data = MakeData();
+                            if (!Shell32.Shell_NotifyIconW(Shell32.NotifyIconMessage.NIM_ADD, ref data))
+                            {
+                                Trace.WriteLine($"ShellNotifyIcon Update NIM_ADD (no GUID) Failed {(uint)Marshal.GetLastWin32Error()}");
+                            }
+                        }
                     }
 
                     _isCreated = true;
@@ -220,7 +257,8 @@ namespace EarTrumpet.UI.Helpers
             var id = new NOTIFYICONIDENTIFIER
             {
                 cbSize = Marshal.SizeOf(typeof(NOTIFYICONIDENTIFIER)),
-                hWnd = _window.Handle
+                hWnd = _window.Handle,
+                guidItem = _useGuid ? s_iconGuid : Guid.Empty,
             };
 
             if (Shell32.Shell_NotifyIconGetRect(ref id, out RECT location) == 0)

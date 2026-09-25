@@ -14,8 +14,7 @@ if (-not $NoBuild) {
 }
 
 # Stop the Store copy (it stays installed) and any previous install, then copy the build.
-Get-Process EarTrumpet -ErrorAction SilentlyContinue | Stop-Process -Force
-Start-Sleep -Seconds 1
+& (Join-Path $root 'stop-eartrumpet.ps1')
 New-Item -ItemType Directory -Force $installDir | Out-Null
 robocopy (Join-Path $root 'Build\Release') $installDir /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
 if ($LASTEXITCODE -ge 8) { throw "copy failed ($LASTEXITCODE)" }

@@ -33,6 +33,7 @@ namespace EarTrumpet
         public DeviceCollectionViewModel CollectionViewModel { get; private set; }
 
         private static readonly Stopwatch s_appTimer = Stopwatch.StartNew();
+        private static EventWaitHandle s_exitRequest;
         private FlyoutViewModel _flyoutViewModel;
 
         private ShellNotifyIcon _trayIcon;
@@ -59,6 +60,10 @@ namespace EarTrumpet
             if (SingleInstanceAppMutex.TakeExclusivity())
             {
                 Exit += (_, __) => SingleInstanceAppMutex.ReleaseExclusivity();
+
+                // Lets scripts close EarTrumpet cleanly (so it removes its tray icon) instead of killing it.
+                s_exitRequest = new EventWaitHandle(false, EventResetMode.AutoReset, @"Local\EarTrumpet.ExitRequest");
+                ThreadPool.RegisterWaitForSingleObject(s_exitRequest, (_, __) => Dispatcher.BeginInvoke((Action)Shutdown), null, Timeout.Infinite, true);
 
                 try
                 {
