@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Runtime.InteropServices;
 
 namespace EarTrumpet.Interop
@@ -66,5 +67,13 @@ namespace EarTrumpet.Interop
 
         [DllImport("shell32.dll", PreserveSig = true)]
         public static extern int Shell_NotifyIconGetRect(ref NOTIFYICONIDENTIFIER identifier, out RECT iconLocation);
+
+        // A negative index is a resource id, a positive one an icon's position in the file.
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = true)]
+        public static extern int SHDefExtractIcon(string pszIconFile, int iIndex, uint uFlags, out IntPtr phiconLarge, IntPtr phiconSmall, uint nIconSize);
+
+        // The shell's "Change Icon" dialog (exported by ordinal only).
+        [DllImport("shell32.dll", EntryPoint = "#62", CharSet = CharSet.Unicode, PreserveSig = true)]
+        public static extern int PickIconDlg(IntPtr hwnd, StringBuilder pszIconPath, uint cchIconPath, ref int piIconIndex);
     }
 }

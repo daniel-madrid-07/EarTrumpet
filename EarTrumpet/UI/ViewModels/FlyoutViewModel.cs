@@ -24,6 +24,7 @@ namespace EarTrumpet.UI.ViewModels
         public FlyoutViewState State { get; private set; }
         public ObservableCollection<DeviceViewModel> Devices { get; private set; }
         public ICommand ExpandCollapse { get; private set; }
+        public ICommand OpenAppsSettings { get; }
         public InputType LastInput { get; private set; }
         public ICommand DisplaySettingsChanged { get; }
 
@@ -36,7 +37,7 @@ namespace EarTrumpet.UI.ViewModels
         private MouseHook _mh;
         private Rect _winRect;
 
-        public FlyoutViewModel(DeviceCollectionViewModel mainViewModel, Action returnFocusToTray, AppSettings settings)
+        public FlyoutViewModel(DeviceCollectionViewModel mainViewModel, Action returnFocusToTray, AppSettings settings, Action openAppsSettings)
         {
             _settings = settings;
             IsExpanded = _settings.IsExpanded;
@@ -57,6 +58,12 @@ namespace EarTrumpet.UI.ViewModels
             {
                 IsExpandingOrCollapsing = true;
                 BeginClose(LastInput);
+            });
+
+            OpenAppsSettings = new RelayCommand(() =>
+            {
+                BeginClose(LastInput);
+                openAppsSettings();
             });
             DisplaySettingsChanged = new RelayCommand(() => BeginClose(InputType.Command));
 

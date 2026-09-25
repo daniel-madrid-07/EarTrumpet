@@ -16,6 +16,7 @@ namespace EarTrumpet
         public event Action AbsoluteVolumeUpHotkeyTyped;
         public event Action AbsoluteVolumeDownHotkeyTyped;
         public event EventHandler HiddenAppsChanged;
+        public event EventHandler IconOverridesChanged;
 
         private ISettingsBag _settings = StorageFactory.GetSettings();
 
@@ -199,11 +200,26 @@ namespace EarTrumpet
             }
         }
 
-        // Icons that replace an app's own, keyed like HiddenApps. No UI; edited in the settings store.
+        // Icons that replace an app's own, keyed like HiddenApps.
         public AppIconOverride[] IconOverrides
         {
             get => _settings.Get("IconOverrides", new AppIconOverride[] { });
-            set => _settings.Set("IconOverrides", value);
+            private set
+            {
+                _settings.Set("IconOverrides", value);
+                IconOverridesChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void SetIconOverride(string key, string iconPath)
+        {
+            if (!string.IsNullOrEmpty(key))
+            {
+                Trace.WriteLine($"AppSettings SetIconOverride {key} {iconPath}");
+                IconOverrides = IconOverrides.Where(o => !key.Equals(o.App, StringComparison.OrdinalIgnoreCase))
+                    .Concat(string.IsNullOrEmpty(iconPath) ? new AppIconOverride[] { } : new[] { new AppIconOverride { App = key, IconPath = iconPath } })
+                    .OrderBy(o => o.App, StringComparer.OrdinalIgnoreCase).ToArray();
+            }
         }
 
         public string GetIconOverride(string key) =>

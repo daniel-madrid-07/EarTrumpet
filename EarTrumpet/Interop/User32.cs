@@ -403,5 +403,8 @@ namespace EarTrumpet.Interop
         public static extern bool GetWindowPlacement(
             IntPtr hWnd,
             out WINDOWPLACEMENT lpwndpl);
+
+        [DllImport("user32.dll", PreserveSig = true)]
+        public static extern bool DestroyIcon(IntPtr hIcon);
     }
 }

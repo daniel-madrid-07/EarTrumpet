@@ -38,6 +38,7 @@ namespace EarTrumpet
         private ShellNotifyIcon _trayIcon;
         private WindowHolder _mixerWindow;
         private WindowHolder _settingsWindow;
+        private SettingsViewModel _settingsViewModel;
         private ErrorReporter _errorReporter;
 
         public static AppSettings Settings { get; private set; }
@@ -87,7 +88,7 @@ namespace EarTrumpet
             Exit += (_, __) => _trayIcon.IsVisible = false;
             CollectionViewModel.TrayPropertyChanged += () => _trayIcon.SetTooltip(CollectionViewModel.GetTrayToolTip());
 
-            _flyoutViewModel = new FlyoutViewModel(CollectionViewModel, () => _trayIcon.SetFocus(), Settings);
+            _flyoutViewModel = new FlyoutViewModel(CollectionViewModel, () => _trayIcon.SetFocus(), Settings, OpenAppsSettings);
             FlyoutWindow = new FlyoutWindow(_flyoutViewModel);
             // Initialize the FlyoutWindow last because its Show/Hide cycle will pump messages, causing UI frames
             // to be executed, breaking the assumption that startup is complete.
@@ -247,7 +248,7 @@ namespace EarTrumpet
                         new EarTrumpetShortcutsPageViewModel(Settings),
                         new EarTrumpetMouseSettingsPageViewModel(Settings),
                         new EarTrumpetCommunitySettingsPageViewModel(Settings),
-                        new EarTrumpetHiddenAppsSettingsPageViewModel(Settings),
+                        new EarTrumpetAppsSettingsPageViewModel(Settings, CollectionViewModel),
                         new EarTrumpetLegacySettingsPageViewModel(Settings),
                         new EarTrumpetAboutPageViewModel(() => _errorReporter.DisplayDiagnosticData(), Settings)
                     });
@@ -260,8 +261,19 @@ namespace EarTrumpet
                 allCategories.AddRange(AddonManager.Host.SettingsItems.Select(a => CreateAddonSettingsPage(a)));
             }
 
-            var viewModel = new SettingsViewModel(EarTrumpet.Properties.Resources.SettingsWindowText, allCategories);
-            return new SettingsWindow { DataContext = viewModel };
+            _settingsViewModel = new SettingsViewModel(EarTrumpet.Properties.Resources.SettingsWindowText, allCategories);
+            return new SettingsWindow { DataContext = _settingsViewModel };
+        }
+
+        // The flyout's settings button: Settings, straight on the Apps page.
+        private void OpenAppsSettings()
+        {
+            _settingsWindow?.OpenOrBringToFront();
+            var category = _settingsViewModel?.Categories.FirstOrDefault(c => c.Pages.Any(p => p is EarTrumpetAppsSettingsPageViewModel));
+            if (category != null)
+            {
+                _settingsViewModel.InvokeSearchResult(category, category.Pages.First(p => p is EarTrumpetAppsSettingsPageViewModel));
+            }
         }
 
         private SettingsCategoryViewModel CreateAddonSettingsPage(IEarTrumpetAddonSettingsPage addonSettingsPage)

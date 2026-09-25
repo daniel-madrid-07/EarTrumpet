@@ -671,16 +671,46 @@ Open [https://eartrumpet.app/jmp/fixfonts] now?</value>
   <data name="HiddenAppsSettingsPageText" xml:space="preserve">
     <value>Hidden apps</value>
   </data>
-  <data name="HiddenAppsDescriptionText" xml:space="preserve">
-    <value>Hidden apps don't appear in the flyout or the mixer, even after they restart. Their sound keeps playing.</value>
-  </data>
   <data name="HiddenAppsEmptyText" xml:space="preserve">
-    <value>No hidden apps. To hide one, right-click it in the flyout or the mixer and choose Hide.</value>
+    <value>No hidden apps.</value>
   </data>
   <data name="HiddenAppsRestoreText" xml:space="preserve">
     <value>Show</value>
   </data>
   <data name="SystemSoundsDisplayName" xml:space="preserve">
     <value>System sounds</value>
+  </data>
+  <data name="AppsSettingsPageText" xml:space="preserve">
+    <value>Apps</value>
+  </data>
+  <data name="AppsDescriptionText" xml:space="preserve">
+    <value>Hide the apps you don't want in the flyout and the mixer, or give them another icon. Both are saved per program, so they stay after the app restarts.</value>
+  </data>
+  <data name="AppsCurrentHeaderText" xml:space="preserve">
+    <value>In the mixer now</value>
+  </data>
+  <data name="AppsCurrentEmptyText" xml:space="preserve">
+    <value>No apps are in the mixer right now.</value>
+  </data>
+  <data name="HideProgramLinkText" xml:space="preserve">
+    <value>Hide another program…</value>
+  </data>
+  <data name="HideProgramDialogTitle" xml:space="preserve">
+    <value>Choose a program to hide</value>
+  </data>
+  <data name="ProgramsFileFilterText" xml:space="preserve">
+    <value>Programs (*.exe)</value>
+  </data>
+  <data name="IconOverridesHeaderText" xml:space="preserve">
+    <value>Custom icons</value>
+  </data>
+  <data name="IconOverridesEmptyText" xml:space="preserve">
+    <value>No custom icons. Use Change icon on an app in the mixer.</value>
+  </data>
+  <data name="ChangeIconLinkText" xml:space="preserve">
+    <value>Change icon…</value>
+  </data>
+  <data name="ResetIconLinkText" xml:space="preserve">
+    <value>Original icon</value>
   </data>
 </root>

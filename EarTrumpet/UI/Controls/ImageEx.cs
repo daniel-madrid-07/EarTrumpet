@@ -81,7 +81,25 @@ namespace EarTrumpet.UI.Controls
                         var iconPath = new StringBuilder(path);
                         int iconIndex = Shlwapi.PathParseIconLocationW(iconPath);
 
-                        if (iconIndex != 0)
+                        if (iconIndex > 0)
+                        {
+                            // A positive number is the icon's position in the file (as the Change Icon
+                            // dialog returns it); negative numbers are resource ids, handled below.
+                            var size = (int)(Width * scale);
+                            if (Shell32.SHDefExtractIcon(iconPath.ToString(), iconIndex, 0, out var hIcon, IntPtr.Zero, (uint)size) == 0 && hIcon != IntPtr.Zero)
+                            {
+                                try
+                                {
+                                    return Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                                }
+                                finally
+                                {
+                                    User32.DestroyIcon(hIcon);
+                                }
+                            }
+                            return null;
+                        }
+                        else if (iconIndex != 0)
                         {
                             using (var icon = IconHelper.LoadIconResource(iconPath.ToString(), Math.Abs(iconIndex), (int)(Width * scale), (int)(Height * scale)))
                             {

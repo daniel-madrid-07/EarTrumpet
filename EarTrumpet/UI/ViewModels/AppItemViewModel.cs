@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 
 namespace EarTrumpet.UI.ViewModels
@@ -64,6 +65,11 @@ namespace EarTrumpet.UI.ViewModels
             _session.PropertyChanged += Session_PropertyChanged;
             _parent = new WeakReference<DeviceViewModel>(parent);
 
+            if (EarTrumpet.App.Settings != null)
+            {
+                WeakEventManager<AppSettings, EventArgs>.AddHandler(EarTrumpet.App.Settings, nameof(AppSettings.IconOverridesChanged), OnIconOverridesChanged);
+            }
+
             if (_session.Children != null)
             {
                 _session.Children.CollectionChanged += Children_CollectionChanged;
@@ -75,6 +81,8 @@ namespace EarTrumpet.UI.ViewModels
         {
             _session.PropertyChanged -= Session_PropertyChanged;
         }
+
+        private void OnIconOverridesChanged(object sender, EventArgs e) => RaisePropertyChanged(nameof(IconPath));
 
         private void Session_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

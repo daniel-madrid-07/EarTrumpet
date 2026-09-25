@@ -294,7 +294,7 @@
     <Compile Include="UI\ViewModels\AddonAboutPageViewModel.cs" />
     <Compile Include="UI\ViewModels\AdvertisedCategorySettingsViewModel.cs" />
     <Compile Include="UI\ViewModels\EarTrumpetAboutPageViewModel.cs" />
-    <Compile Include="UI\ViewModels\EarTrumpetHiddenAppsSettingsPageViewModel.cs" />
+    <Compile Include="UI\ViewModels\EarTrumpetAppsSettingsPageViewModel.cs" />
     <Compile Include="UI\ViewModels\EarTrumpetLegacySettingsPageViewModel.cs" />
     <Compile Include="UI\Helpers\AppKey.cs" />
     <Compile Include="UI\ViewModels\HotkeyViewModel.cs" />

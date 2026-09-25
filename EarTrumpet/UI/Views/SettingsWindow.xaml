@@ -178,39 +178,80 @@
                           IsChecked="{Binding UseLogarithmicVolume, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:EarTrumpetHiddenAppsSettingsPageViewModel}">
+        <DataTemplate x:Key="AppsPageRowTemplate">
+            <Grid MaxWidth="640">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ctl:ImageEx Width="24"
+                             Height="24"
+                             Margin="12,0,12,0"
+                             VerticalAlignment="Center"
+                             SourceEx="{Binding Icon}"
+                             Stretch="Uniform" />
+                <StackPanel Grid.Column="1"
+                            Margin="0,6"
+                            VerticalAlignment="Center">
+                    <TextBlock FontSize="16"
+                               Text="{Binding DisplayName}"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock FontSize="13"
+                               Theme:Brush.Foreground="GrayText"
+                               Text="{Binding Detail}"
+                               TextTrimming="CharacterEllipsis"
+                               Visibility="{Binding DetailVisibility}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <TextBlock Margin="12,6" Style="{StaticResource HyperlinkBlock}" Visibility="{Binding HideVisibility}">
+                        <Hyperlink Command="{Binding Hide}"><Run Text="{x:Static resx:Resources.HideAppButtonText}" /></Hyperlink>
+                    </TextBlock>
+                    <TextBlock Margin="12,6" Style="{StaticResource HyperlinkBlock}" Visibility="{Binding RestoreVisibility}">
+                        <Hyperlink Command="{Binding Restore}"><Run Text="{x:Static resx:Resources.HiddenAppsRestoreText}" /></Hyperlink>
+                    </TextBlock>
+                    <TextBlock Margin="12,6" Style="{StaticResource HyperlinkBlock}" Visibility="{Binding ChangeIconVisibility}">
+                        <Hyperlink Command="{Binding ChangeIcon}"><Run Text="{x:Static resx:Resources.ChangeIconLinkText}" /></Hyperlink>
+                    </TextBlock>
+                    <TextBlock Margin="12,6" Style="{StaticResource HyperlinkBlock}" Visibility="{Binding ResetIconVisibility}">
+                        <Hyperlink Command="{Binding ResetIcon}"><Run Text="{x:Static resx:Resources.ResetIconLinkText}" /></Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EarTrumpetAppsSettingsPageViewModel}">
             <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource BodySubText}" Text="{x:Static resx:Resources.HiddenAppsDescriptionText}" />
-                <TextBlock Style="{StaticResource BodyText}"
+                <TextBlock Style="{StaticResource BodySubText}" Text="{x:Static resx:Resources.AppsDescriptionText}" />
+
+                <TextBlock Style="{StaticResource HeadingText}" Text="{x:Static resx:Resources.AppsCurrentHeaderText}" />
+                <TextBlock Style="{StaticResource BodySubText}"
+                           Text="{x:Static resx:Resources.AppsCurrentEmptyText}"
+                           Visibility="{Binding CurrentAppsEmptyVisibility}" />
+                <ItemsControl Focusable="False"
+                              ItemTemplate="{StaticResource AppsPageRowTemplate}"
+                              ItemsSource="{Binding CurrentApps}" />
+
+                <TextBlock Style="{StaticResource HeadingText}" Text="{x:Static resx:Resources.HiddenAppsSettingsPageText}" />
+                <TextBlock Style="{StaticResource BodySubText}"
                            Text="{x:Static resx:Resources.HiddenAppsEmptyText}"
-                           Visibility="{Binding EmptyVisibility}" />
-                <ItemsControl Margin="0,12,0,0"
+                           Visibility="{Binding HiddenAppsEmptyVisibility}" />
+                <ItemsControl Focusable="False"
+                              ItemTemplate="{StaticResource AppsPageRowTemplate}"
+                              ItemsSource="{Binding HiddenApps}" />
+                <TextBlock Style="{StaticResource HyperlinkBlock}">
+                    <Hyperlink Command="{Binding HideProgram}"><Run Text="{x:Static resx:Resources.HideProgramLinkText}" /></Hyperlink>
+                </TextBlock>
+
+                <TextBlock Style="{StaticResource HeadingText}" Text="{x:Static resx:Resources.IconOverridesHeaderText}" />
+                <TextBlock Style="{StaticResource BodySubText}"
+                           Text="{x:Static resx:Resources.IconOverridesEmptyText}"
+                           Visibility="{Binding IconOverridesEmptyVisibility}" />
+                <ItemsControl Margin="0,0,0,24"
                               Focusable="False"
-                              ItemsSource="{Binding HiddenApps}"
-                              Visibility="{Binding ListVisibility}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid MaxWidth="480" HorizontalAlignment="Left">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="320" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Style="{StaticResource BodyText}"
-                                           Text="{Binding DisplayName}"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap" />
-                                <TextBlock Grid.Column="1"
-                                           Margin="12,6"
-                                           VerticalAlignment="Center"
-                                           Style="{StaticResource HyperlinkBlock}">
-                                    <Hyperlink Command="{Binding Restore}">
-                                        <Run Text="{x:Static resx:Resources.HiddenAppsRestoreText}" />
-                                    </Hyperlink>
-                                </TextBlock>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                              ItemTemplate="{StaticResource AppsPageRowTemplate}"
+                              ItemsSource="{Binding IconOverrides}" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:EarTrumpetLegacySettingsPageViewModel}">

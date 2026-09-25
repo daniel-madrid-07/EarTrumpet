@@ -1718,16 +1718,7 @@ namespace EarTrumpet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hidden apps don't appear in the flyout or the mixer, even after they restart. Their sound keeps playing..
-        /// </summary>
-        public static string HiddenAppsDescriptionText {
-            get {
-                return ResourceManager.GetString("HiddenAppsDescriptionText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No hidden apps. To hide one, right-click it in the flyout or the mixer and choose Hide..
+        ///   Looks up a localized string similar to No hidden apps..
         /// </summary>
         public static string HiddenAppsEmptyText {
             get {
@@ -1750,6 +1741,104 @@ namespace EarTrumpet.Properties {
         public static string SystemSoundsDisplayName {
             get {
                 return ResourceManager.GetString("SystemSoundsDisplayName", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized string similar to Apps.
+        /// </summary>
+        public static string AppsSettingsPageText {
+            get {
+                return ResourceManager.GetString("AppsSettingsPageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide the apps you don't want in the flyout and the mixer, or give them another icon. Both are saved per program, so they stay after the app restarts..
+        /// </summary>
+        public static string AppsDescriptionText {
+            get {
+                return ResourceManager.GetString("AppsDescriptionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In the mixer now.
+        /// </summary>
+        public static string AppsCurrentHeaderText {
+            get {
+                return ResourceManager.GetString("AppsCurrentHeaderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No apps are in the mixer right now..
+        /// </summary>
+        public static string AppsCurrentEmptyText {
+            get {
+                return ResourceManager.GetString("AppsCurrentEmptyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide another program….
+        /// </summary>
+        public static string HideProgramLinkText {
+            get {
+                return ResourceManager.GetString("HideProgramLinkText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose a program to hide.
+        /// </summary>
+        public static string HideProgramDialogTitle {
+            get {
+                return ResourceManager.GetString("HideProgramDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Programs (*.exe).
+        /// </summary>
+        public static string ProgramsFileFilterText {
+            get {
+                return ResourceManager.GetString("ProgramsFileFilterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom icons.
+        /// </summary>
+        public static string IconOverridesHeaderText {
+            get {
+                return ResourceManager.GetString("IconOverridesHeaderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No custom icons. Use Change icon on an app in the mixer..
+        /// </summary>
+        public static string IconOverridesEmptyText {
+            get {
+                return ResourceManager.GetString("IconOverridesEmptyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change icon….
+        /// </summary>
+        public static string ChangeIconLinkText {
+            get {
+                return ResourceManager.GetString("ChangeIconLinkText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Original icon.
+        /// </summary>
+        public static string ResetIconLinkText {
+            get {
+                return ResourceManager.GetString("ResetIconLinkText", resourceCulture);
             }
         }
     }
