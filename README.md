@@ -1,5 +1,13 @@
 # EarTrumpet
 
+> **About this fork.** This is a fork of [File-New-Project/EarTrumpet](https://github.com/File-New-Project/EarTrumpet) (branch `hide-apps`). It adds:
+>
+> - **Hide apps.** Right-click an app in the flyout or the full mixer and press *Hide* (the crossed-out eye). Hidden apps are keyed by executable name (for example `steam.exe`), so they stay hidden across restarts. *Settings > General > Hidden apps* lists them, with *Show* to bring one back. Only the row is hidden; the app's sound keeps playing.
+> - **Session names and icons, also for packaged apps.** When an app names its audio session or gives it an icon (`IAudioSessionControl::SetDisplayName` / `SetIconPath`), EarTrumpet shows them for Store (packaged) apps too, such as Store Python. That includes icons set after the app appears, and rows that group several processes of one package, where the process that named itself wins.
+> - **Sized `.ico` frames.** A session's `.ico` file is drawn from the frame that fits the row rather than a scaled-down 256 px frame, and the file is not kept open.
+>
+> **Building.** Visual Studio works as described in [COMPILING.md](COMPILING.md). With only the Visual Studio Build Tools (C# compiler and a Windows 10/11 SDK), run `powershell -File build-release.ps1`. It downloads the .NET Framework 4.6.2 reference assemblies from NuGet into `.tools\` and builds `Build\Release\EarTrumpet.exe`, which runs unpackaged and keeps its settings in `HKCU\Software\EarTrumpet`. `install-local.ps1` builds, copies the result to `%LOCALAPPDATA%\Programs\EarTrumpet`, starts it at logon and turns off the Store copy's startup task. `switch-to-store.ps1` goes back to the Store version.
+
 [![GitHub issues](https://img.shields.io/github/issues/File-New-Project/EarTrumpet?style=flat-square)](https://github.com/File-New-Project/EarTrumpet/issues) [![GitHub forks](https://img.shields.io/github/forks/File-New-Project/EarTrumpet?style=flat-square)](https://github.com/File-New-Project/EarTrumpet/network) [![GitHub stars](https://img.shields.io/github/stars/File-New-Project/EarTrumpet?style=flat-square)](https://github.com/File-New-Project/EarTrumpet/stargazers) [![Nuget package](https://img.shields.io/chocolatey/v/eartrumpet?style=flat-square)](https://chocolatey.org/packages/eartrumpet)
 
 ![EarTrumpet Screenshot](./Graphics/hero.gif)
