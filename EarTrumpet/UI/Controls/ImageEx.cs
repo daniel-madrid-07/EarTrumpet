@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -60,6 +61,15 @@ namespace EarTrumpet.UI.Controls
                     path = Environment.ExpandEnvironmentVariables(path.TrimStart('@'));
 
                     var scale = GetWindowDpi() / (double)96;
+
+                    // Session-set .ico files: use the frame that fits the row (the shell would scale
+                    // down the largest one), and don't leave the file open.
+                    var icoFile = GetIcoFile(path);
+                    if (icoFile != null)
+                    {
+                        return LoadIcoFile(icoFile, (int)(Width * scale));
+                    }
+
                     // Packaged apps normally carry an AppUserModelId, but a session can set its own
                     // icon file (e.g. "C:\app\logo.ico,0"), which must be loaded like a desktop icon.
                     if (!isDesktopApp && !IsFilePath(path))
@@ -175,6 +185,27 @@ namespace EarTrumpet.UI.Controls
             catch (ArgumentException)
             {
                 return false;
+            }
+        }
+
+        private static string GetIcoFile(string path)
+        {
+            var iconPath = new StringBuilder(path);
+            Shlwapi.PathParseIconLocationW(iconPath);
+            var file = iconPath.ToString();
+            return file.EndsWith(".ico", StringComparison.OrdinalIgnoreCase) && File.Exists(file) ? file : null;
+        }
+
+        private static ImageSource LoadIcoFile(string file, int size)
+        {
+            using (var stream = File.OpenRead(file))
+            {
+                var frames = new IconBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad).Frames;
+                var frame = frames.Where(f => f.PixelWidth >= size).OrderBy(f => f.PixelWidth).ThenByDescending(f => f.Format.BitsPerPixel).FirstOrDefault() ??
+                            frames.OrderByDescending(f => f.PixelWidth).ThenByDescending(f => f.Format.BitsPerPixel).First();
+                frame.Freeze();
+                Trace.WriteLine($"ImageEx LoadIcoFile {frame.PixelWidth}x{frame.PixelHeight} {file}");
+                return frame;
             }
         }
 
